@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>面談邀請 · Interview Invitation | 2026 Foxconn Summer Internship</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <style>
+    /* ─── Reset & Variables ─────────────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
+    :root {
+      --navy:        #050c1a;
+      --navy2:       #09152a;
+      --navy3:       #0d1e3a;
+      --blue:        #1a53b8;
+      --blue-mid:    #2d6fd6;
+      --blue-bright: #4a90f5;
+      --blue-glow:   rgba(74,144,245,.38);
+      --gold:        #c8a34a;
+      --gold-lt:     #e6c96a;
+      --silver:      #7a90b0;
+      --silver-lt:   #b8ccdf;
+      --white:       #e6edf7;
+      --border:      rgba(74,144,245,.18);
+      --border-gold: rgba(200,163,74,.4);
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: -apple-system, "Helvetica Neue", Arial, "PingFang TC",
+                   "Microsoft JhengHei", sans-serif;
+      min-height: 100vh;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+    }
+
+    /* ─── CSS background (replaces canvas — runs on compositor, never blocks touch) ── */
+    #bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      /* subtle grid */
+      background-image:
+        linear-gradient(rgba(74,144,245,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(74,144,245,.025) 1px, transparent 1px);
+      background-size: 55px 55px;
+    }
+    /* individual star dots — only opacity animates, pure compositor */
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      animation: twinkle var(--d) ease-in-out infinite;
+      animation-delay: var(--dl);
+      will-change: opacity;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: var(--lo); }
+      50%      { opacity: var(--hi); }
+    }
+
+    /* Subtle scanline overlay */
+    .scanlines {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0,0,0,.04) 3px,
+        rgba(0,0,0,.04) 4px
+      );
+    }
+
+    /* ─── Screen system — normal document flow, body scrolls ────────── */
+    .screen {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+    }
+    .screen.out {
+      display: none !important;
+    }
+    /* centres content vertically when it fits; grows naturally when it doesn't */
+    .screen-inner {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       SCREEN 1 — INVITATION
+    ═══════════════════════════════════════════════════════════════════ */
+
+    /* Animated top ring */
+    .ring-wrap {
+      position: relative;
+      width: 72px; height: 72px;
+      margin: 0 auto 1.6rem;
+      flex-shrink: 0;
+    }
+    .ring-wrap::before, .ring-wrap::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 1px solid var(--blue-bright);
+      animation: ringPulse 2.4s ease-in-out infinite;
+    }
+    .ring-wrap::after {
+      inset: -9px;
+      border-color: rgba(74,144,245,.25);
+      animation-delay: .4s;
+    }
+    .ring-inner {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      color: var(--blue-bright);
+      /* opacity-only pulse — no filter repaint */
+      animation: glowPulse 2.4s ease-in-out infinite;
+    }
+    @keyframes ringPulse {
+      0%,100% { transform: scale(1);    opacity: .7; }
+      50%      { transform: scale(1.06); opacity: 1;  }
+    }
+    @keyframes glowPulse {
+      0%,100% { opacity: .75; }
+      50%      { opacity: 1;   }
+    }
+
+    /* Brand line */
+    .brand-line {
+      text-align: center;
+      margin-bottom: 1.4rem;
+    }
+    .brand-corp {
+      font-size: .68rem; letter-spacing: .35em;
+      color: var(--silver); text-transform: uppercase;
+      margin-bottom: .3rem;
+    }
+    .brand-prog {
+      font-size: .82rem; letter-spacing: .14em;
+      color: var(--blue-bright);
+    }
+
+    /* Metallic headline */
+    .headline {
+      text-align: center; margin-bottom: 1.4rem;
+    }
+    .hl-stage {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .65rem; letter-spacing: .35em;
+      color: var(--gold); text-transform: uppercase;
+      margin-bottom: .5rem;
+    }
+    .hl-stage-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+    .hl-zh {
+      font-size: clamp(1.45rem, 3.8vw, 2.4rem);
+      font-weight: 700; line-height: 1.15;
+      background: linear-gradient(115deg,
+        #7a90b0 0%, #dce8f5 28%,
+        #c8a34a 48%, #e6c96a 54%,
+        #dce8f5 72%, #7a90b0 100%);
+      background-size: 220% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: metalShine 5s linear infinite;
+    }
+    .hl-en {
+      font-size: clamp(.85rem, 2.2vw, 1.1rem);
+      font-weight: 300; color: var(--silver-lt);
+      letter-spacing: .05em; margin-top: .35rem;
+    }
+    @keyframes metalShine {
+      0%   { background-position: 220% center; }
+      100% { background-position: -220% center; }
+    }
+
+    /* Gold divider */
+    .divider {
+      width: 56px; height: 1px; margin: 0 auto 1.4rem;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    /* Info card */
+    .info-card {
+      background: rgba(9,21,42,.75);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem 1.8rem;
+      max-width: 520px; width: 100%;
+      backdrop-filter: blur(14px);
+      margin-bottom: 1.6rem;
+    }
+
+    .tags-row {
+      display: flex; flex-wrap: wrap; gap: .4rem;
+      margin-bottom: 1.1rem;
+    }
+    .tag {
+      display: inline-flex; align-items: center; gap: .35rem;
+      border-radius: 20px; padding: .28rem .75rem;
+      font-size: .7rem; letter-spacing: .04em;
+    }
+    .tag-pass {
+      background: rgba(74,244,145,.07);
+      border: 1px solid rgba(74,244,145,.35);
+      color: #5eeaa0;
+    }
+    .tag-pass::before { content: '✓'; font-weight: 700; }
+
+    .card-body {
+      font-size: .8rem; color: var(--silver-lt);
+      line-height: 1.8; margin-bottom: 1.1rem;
+      padding-bottom: 1.1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-body-en { color: var(--silver); font-size: .73rem; }
+
+    .deadline-row {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .75rem;
+    }
+    .deadline-icon { font-size: 1rem; }
+    .deadline-label-zh { color: var(--gold); font-size: .68rem; margin-bottom: .1rem; }
+    .deadline-label-en { color: var(--silver); font-size: .62rem; }
+    .deadline-val { color: var(--white); font-weight: 600; }
+
+    .sessions-row {
+      margin-top: .9rem;
+      display: flex; flex-wrap: wrap; gap: .5rem;
+    }
+    .session-chip {
+      background: rgba(74,144,245,.09);
+      border: 1px solid rgba(74,144,245,.25);
+      border-radius: 8px; padding: .3rem .7rem;
+      font-size: .7rem; color: var(--silver-lt);
+    }
+    .session-chip span { color: var(--blue-bright); font-weight: 600; }
+
+    /* CTA button */
+    .cta-btn {
+      position: relative;
+      background: linear-gradient(135deg, var(--blue), var(--blue-bright));
+      color: #fff; border: none; border-radius: 10px;
+      padding: 1rem 2.8rem;
+      cursor: pointer; letter-spacing: .08em;
+      box-shadow: 0 0 28px var(--blue-glow);
+      transition: transform .25s ease, box-shadow .25s ease;
+      /* clip shimmer without clipping text */
+      isolation: isolate;
+    }
+    /* shimmer lives in a pseudo that clips itself */
+    .cta-btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      background: linear-gradient(90deg,
+        transparent 0%, rgba(255,255,255,.18) 50%, transparent 100%);
+      background-size: 200% 100%;
+      background-position: -200% 0;
+      transition: background-position .5s ease;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .cta-btn:hover::before { background-position: 200% 0; }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 36px rgba(74,144,245,.6);
+    }
+    .cta-zh { font-size: .98rem; display: block; }
+    .cta-en { font-size: .72rem; opacity: .78; display: block; margin-top: .22rem; letter-spacing: .04em; }
+
+    .footer-note {
+      margin-top: 1.4rem;
+      font-size: .62rem; color: var(--silver);
+      letter-spacing: .04em; text-align: center;
+    }
+
+    /* DEI accommodations strip */
+    .dei-strip {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: .5rem;
+      justify-content: center;
+    }
+    .dei-chip {
+      display: inline-flex; align-items: center; gap: .32rem;
+      background: rgba(74,144,245,.06);
+      border: 1px solid rgba(74,144,245,.16);
+      border-radius: 20px; padding: .26rem .7rem;
+      font-size: .67rem; color: var(--silver-lt);
+      line-height: 1.4;
+    }
+    .dei-chip-icon { font-size: .82rem; flex-shrink: 0; }
+    .dei-label { font-size: .55rem; color: var(--silver); display: block; }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       NAME MODAL
+    ═══════════════════════════════════════════════════════════════════ */
+    #name-modal {
+      position: fixed; inset: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(5,12,26,.82);
+      backdrop-filter: blur(10px);
+      opacity: 0; pointer-events: none;
+      transition: opacity .35s ease;
+    }
+    #name-modal.open { opacity: 1; pointer-events: all; }
+
+    .modal-box {
+      background: var(--navy2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.2rem;
+      max-width: 400px; width: 90%;
+      box-shadow: 0 24px 64px rgba(0,0,0,.55);
+      transform: scale(.94);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    #name-modal.open .modal-box { transform: scale(1); }
+
+    .modal-title-zh { font-size: 1.1rem; color: var(--white); margin-bottom: .2rem; }
+    .modal-title-en { font-size: .72rem; color: var(--silver); margin-bottom: 1.4rem; }
+
+    .field-label {
+      display: block; font-size: .72rem;
+      color: var(--silver); margin-bottom: .4rem;
+      letter-spacing: .04em;
+    }
+    .field-input {
+      width: 100%;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .72rem 1rem;
+      color: var(--white); font-size: .92rem;
+      outline: none; margin-bottom: 1.2rem;
+      transition: border-color .25s, box-shadow .25s;
+    }
+    .field-input:focus {
+      border-color: var(--blue-bright);
+      box-shadow: 0 0 0 3px rgba(74,144,245,.16);
+    }
+    .modal-cta {
+      width: 100%;
+      background: linear-gradient(135deg, var(--blue), var(--blue-bright));
+      color: #fff; border: none; border-radius: 8px;
+      padding: .85rem;
+      font-size: .9rem; cursor: pointer;
+      letter-spacing: .05em;
+      transition: box-shadow .25s;
+    }
+    .modal-cta:hover { box-shadow: 0 6px 24px var(--blue-glow); }
+    .modal-skip {
+      width: 100%; background: none; border: none;
+      color: var(--silver); font-size: .72rem;
+      cursor: pointer; margin-top: .8rem; padding: .4rem;
+      transition: color .2s;
+    }
+    .modal-skip:hover { color: var(--silver-lt); }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       SCREEN 2 — FORM
+    ═══════════════════════════════════════════════════════════════════ */
+    #s-form {
+      display: flex; flex-direction: column;
+      align-items: stretch;
+      padding: 0;
+      min-height: auto; /* override .screen min-height:100vh — form height = topbar + iframe + bar */
+    }
+
+    .form-topbar {
+      width: 100%;
+      position: sticky; top: 0; z-index: 20; /* sticks while form scrolls */
+      background: rgba(5,12,26,.97);
+      border-bottom: 1px solid var(--border);
+      padding: .85rem 1.4rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .topbar-text { flex: 1; }
+    .topbar-zh { font-size: .88rem; color: var(--white); }
+    .topbar-en { font-size: .65rem; color: var(--silver); margin-top: .1rem; }
+    .topbar-step {
+      font-size: .65rem; color: var(--gold);
+      letter-spacing: .1em; white-space: nowrap;
+    }
+    .back-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--silver); padding: .38rem .8rem;
+      font-size: .72rem; cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .back-btn:hover { border-color: var(--blue-bright); color: var(--blue-bright); }
+
+    .form-iframe-wrap {
+      width: 100%;
+    }
+    #form-iframe {
+      display: block;
+      width: 100%;
+      height: 960px; /* reasonable default — Google Forms typically ~800-1000px */
+      border: none;
+      transition: height .3s ease;
+    }
+
+    /* Manual submit button (fallback) */
+    .manual-submit-bar {
+      width: 100%;
+      position: sticky; bottom: 0; z-index: 20;
+      background: rgba(5,12,26,.97);
+      border-top: 1px solid var(--border);
+      padding: .7rem 1.4rem;
+      display: flex; align-items: center; gap: 1rem;
+      opacity: 0; transition: opacity .4s;
+      pointer-events: none;
+    }
+    .manual-submit-bar.visible { opacity: 1; pointer-events: auto; }
+    .manual-submit-hint {
+      flex: 1; font-size: .72rem; color: var(--silver);
+    }
+    .manual-submit-btn {
+      background: linear-gradient(135deg, #1a6b3a, #27ae6a);
+      color: #fff; border: none; border-radius: 7px;
+      padding: .55rem 1.2rem; font-size: .78rem;
+      cursor: pointer; white-space: nowrap;
+      box-shadow: 0 0 16px rgba(39,174,106,.35);
+      transition: box-shadow .2s;
+    }
+    .manual-submit-btn:hover { box-shadow: 0 4px 20px rgba(39,174,106,.55); }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       CERTIFICATE OVERLAY
+    ═══════════════════════════════════════════════════════════════════ */
+    #cert-overlay {
+      position: fixed; inset: 0; z-index: 80;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      overscroll-behavior-y: contain;
+      background: rgba(5,12,26,.92);
+      backdrop-filter: blur(14px);
+      opacity: 0; pointer-events: none;
+      transition: opacity .5s ease;
+    }
+    /* inner wrapper centres cert card, scrolls on small screens */
+    #cert-overlay-inner {
+      min-height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.2rem;
+    }
+    #cert-overlay.open { opacity: 1; pointer-events: all; }
+
+    .cert-card {
+      position: relative;
+      background: linear-gradient(145deg, #091526 0%, #0d1e3a 55%, #091526 100%);
+      border-radius: 18px;
+      padding: 2.6rem 2.2rem 2rem;
+      max-width: 460px; width: 100%;
+      text-align: center;
+      box-shadow:
+        0 0 0 1px rgba(200,163,74,.45),
+        0 0 48px rgba(74,144,245,.25),
+        0 28px 72px rgba(0,0,0,.65),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      transform: scale(.85);
+      transition: transform .55s cubic-bezier(.34,1.56,.64,1);
+      overflow: hidden;
+    }
+    #cert-overlay.open .cert-card { transform: scale(1); }
+
+    /* Corner ornaments */
+    .corner {
+      position: absolute;
+      width: 22px; height: 22px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: .7;
+    }
+    .c-tl { top: 13px; left: 13px;  border-width: 1px 0 0 1px; }
+    .c-tr { top: 13px; right: 13px; border-width: 1px 1px 0 0; }
+    .c-bl { bottom: 13px; left: 13px;  border-width: 0 0 1px 1px; }
+    .c-br { bottom: 13px; right: 13px; border-width: 0 1px 1px 0; }
+
+    /* Shimmer sweep */
+    .cert-card::after {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 45%; height: 100%;
+      background: linear-gradient(90deg,
+        transparent, rgba(255,255,255,.04), transparent);
+      border-radius: 18px;
+      animation: shimmerSweep 3.5s ease-in-out .6s infinite;
+      pointer-events: none;
+    }
+    @keyframes shimmerSweep {
+      0%   { transform: translateX(-100%) skewX(-14deg); }
+      100% { transform: translateX(260%)  skewX(-14deg); }
+    }
+
+    .cert-seal {
+      width: 66px; height: 66px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--blue-bright));
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.2rem;
+      font-size: 28px;
+      box-shadow: 0 0 24px rgba(74,144,245,.6);
+      position: relative; z-index: 1;
+    }
+    .cert-seal::before {
+      content: '';
+      position: absolute; inset: -5px;
+      border-radius: 50%;
+      border: 1px solid rgba(200,163,74,.5);
+    }
+
+    .cert-brand {
+      font-size: .62rem; letter-spacing: .4em;
+      color: var(--gold); text-transform: uppercase;
+      margin-bottom: .4rem; position: relative; z-index: 1;
+    }
+    .cert-title-zh {
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--white); margin-bottom: .15rem;
+      position: relative; z-index: 1;
+    }
+    .cert-title-en {
+      font-size: .68rem; color: var(--silver);
+      letter-spacing: .1em; margin-bottom: 1.1rem;
+      position: relative; z-index: 1;
+    }
+
+    .cert-rule {
+      width: 100%; height: 1px; margin: .9rem 0;
+      background: linear-gradient(90deg,
+        transparent, var(--gold), transparent);
+      position: relative; z-index: 1;
+    }
+
+    .cert-to {
+      font-size: .65rem; color: var(--silver);
+      letter-spacing: .12em; margin-bottom: .3rem;
+      position: relative; z-index: 1;
+    }
+    .cert-name {
+      font-size: 1.55rem; font-weight: 700;
+      background: linear-gradient(115deg,
+        #7a90b0 0%, #dce8f5 25%,
+        #c8a34a 46%, #e6c96a 52%,
+        #dce8f5 70%, #7a90b0 100%);
+      background-size: 220% auto;
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+      animation: metalShine 3.5s linear infinite;
+      position: relative; z-index: 1;
+      min-height: 1.9rem;
+    }
+
+    .cert-body {
+      font-size: .78rem; color: var(--silver-lt);
+      line-height: 1.75;
+      position: relative; z-index: 1;
+    }
+    .cert-body .en { color: var(--silver); font-size: .72rem; }
+
+    .cert-prog-zh {
+      font-size: .88rem; font-weight: 700;
+      color: var(--blue-bright); margin-top: .5rem;
+      position: relative; z-index: 1;
+    }
+    .cert-prog-en {
+      font-size: .68rem; color: var(--silver);
+      letter-spacing: .04em;
+      position: relative; z-index: 1;
+    }
+
+    .cert-code-box {
+      background: rgba(74,144,245,.07);
+      border: 1px solid rgba(74,144,245,.22);
+      border-radius: 8px;
+      padding: .55rem 1rem; margin: .9rem auto;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: .82rem; color: var(--blue-bright);
+      letter-spacing: .18em; display: inline-block;
+      position: relative; z-index: 1;
+    }
+
+    .cert-date {
+      font-size: .68rem; color: var(--silver);
+      position: relative; z-index: 1;
+    }
+
+    .cert-actions {
+      display: flex; gap: .8rem; margin-top: 1.6rem;
+      position: relative; z-index: 1;
+    }
+    .cert-btn {
+      flex: 1; padding: .72rem .5rem;
+      border-radius: 9px; font-size: .78rem;
+      cursor: pointer; letter-spacing: .04em;
+      transition: all .25s;
+    }
+    .cert-btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--blue-bright));
+      color: #fff; border: none;
+      box-shadow: 0 4px 18px var(--blue-glow);
+    }
+    .cert-btn-primary:hover {
+      box-shadow: 0 8px 28px rgba(74,144,245,.65);
+      transform: translateY(-1px);
+    }
+    .cert-btn-secondary {
+      background: none;
+      color: var(--silver);
+      border: 1px solid var(--border);
+    }
+    .cert-btn-secondary:hover {
+      border-color: var(--silver-lt);
+      color: var(--white);
+    }
+
+    /* ─── Mobile performance: kill expensive paints ─────────────────── */
+    @media (max-width: 768px) {
+      /* Stop background-position animation — causes repaints every frame */
+      .hl-zh, .cert-name {
+        animation: none !important;
+        background-position: 60% center !important;
+      }
+      /* Remove backdrop-filter blur — extremely expensive on mobile GPU */
+      .info-card, .form-topbar, #name-modal, .modal-box,
+      #cert-overlay, #name-modal { backdrop-filter: none !important; }
+    }
+
+    /* ─── Print styles ──────────────────────────────────────────────── */
+    @media print {
+      body { background: #fff !important; overflow: auto; }
+      #bg, .scanlines, #s-invite, #s-form,
+      #name-modal, .cert-actions { display: none !important; }
+      #cert-overlay {
+        position: static !important;
+        background: none !important;
+        backdrop-filter: none !important;
+        display: block !important;
+        opacity: 1 !important;
+        padding: 0 !important;
+      }
+      .cert-card {
+        max-width: 100% !important;
+        box-shadow: none !important;
+        border: 2px solid #999 !important;
+        transform: none !important;
+      }
+      .cert-card::after { display: none !important; }
+    }
+
+    /* ─── Responsive ───────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      #form-iframe { height: 860px; }
+    }
+    @media (max-width: 520px) {
+      .info-card { padding: 1.2rem 1rem; }
+      .cert-card { padding: 2rem 1.4rem 1.6rem; }
+      .cert-actions { flex-direction: column; }
+      #form-iframe { height: 780px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── CSS background (no JS, no main thread) ───────────────────────── -->
+<div id="bg">
+  <!-- blue stars -->
+  <div class="star" style="left:5%;top:8%;width:2px;height:2px;background:rgba(74,144,245,.9);--d:3.1s;--dl:0s;--lo:.15;--hi:.7"></div>
+  <div class="star" style="left:18%;top:22%;width:1px;height:1px;background:rgba(74,144,245,.8);--d:4.2s;--dl:.7s;--lo:.1;--hi:.55"></div>
+  <div class="star" style="left:32%;top:6%;width:2px;height:2px;background:rgba(74,144,245,.9);--d:2.8s;--dl:1.1s;--lo:.2;--hi:.8"></div>
+  <div class="star" style="left:47%;top:35%;width:1px;height:1px;background:rgba(74,144,245,.7);--d:5s;--dl:.3s;--lo:.1;--hi:.5"></div>
+  <div class="star" style="left:61%;top:14%;width:2px;height:2px;background:rgba(74,144,245,.9);--d:3.6s;--dl:1.8s;--lo:.15;--hi:.75"></div>
+  <div class="star" style="left:75%;top:28%;width:1px;height:1px;background:rgba(74,144,245,.8);--d:4.8s;--dl:.5s;--lo:.1;--hi:.6"></div>
+  <div class="star" style="left:88%;top:9%;width:2px;height:2px;background:rgba(74,144,245,.9);--d:3.3s;--dl:2.2s;--lo:.2;--hi:.8"></div>
+  <div class="star" style="left:12%;top:52%;width:1px;height:1px;background:rgba(74,144,245,.7);--d:4.5s;--dl:.9s;--lo:.1;--hi:.5"></div>
+  <div class="star" style="left:28%;top:68%;width:2px;height:2px;background:rgba(74,144,245,.9);--d:2.9s;--dl:1.5s;--lo:.15;--hi:.7"></div>
+  <div class="star" style="left:54%;top:72%;width:1px;height:1px;background:rgba(74,144,245,.8);--d:5.2s;--dl:.2s;--lo:.1;--hi:.55"></div>
+  <div class="star" style="left:70%;top:58%;width:2px;height:2px;background:rgba(74,144,245,.9);--d:3.7s;--dl:2.8s;--lo:.2;--hi:.75"></div>
+  <div class="star" style="left:85%;top:75%;width:1px;height:1px;background:rgba(74,144,245,.7);--d:4.1s;--dl:1.3s;--lo:.1;--hi:.5"></div>
+  <div class="star" style="left:40%;top:88%;width:2px;height:2px;background:rgba(74,144,245,.9);--d:3.4s;--dl:.6s;--lo:.15;--hi:.7"></div>
+  <div class="star" style="left:92%;top:44%;width:1px;height:1px;background:rgba(74,144,245,.8);--d:4.7s;--dl:2s;--lo:.1;--hi:.6"></div>
+  <div class="star" style="left:7%;top:82%;width:2px;height:2px;background:rgba(74,144,245,.9);--d:2.6s;--dl:3.1s;--lo:.2;--hi:.8"></div>
+  <!-- gold accents -->
+  <div class="star" style="left:22%;top:41%;width:2px;height:2px;background:rgba(200,163,74,.9);--d:5.5s;--dl:1s;--lo:.15;--hi:.7"></div>
+  <div class="star" style="left:58%;top:19%;width:1px;height:1px;background:rgba(200,163,74,.8);--d:6.1s;--dl:2.4s;--lo:.1;--hi:.55"></div>
+  <div class="star" style="left:79%;top:84%;width:2px;height:2px;background:rgba(200,163,74,.9);--d:4.9s;--dl:.4s;--lo:.15;--hi:.65"></div>
+  <div class="star" style="left:44%;top:56%;width:1px;height:1px;background:rgba(200,163,74,.7);--d:7s;--dl:3.5s;--lo:.08;--hi:.45"></div>
+</div>
+<div class="scanlines"></div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SCREEN 1 — INVITATION
+═══════════════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-invite">
+<div class="screen-inner">
+
+  <div class="ring-wrap">
+    <div class="ring-inner">
+      <img src="square_monotone.png" alt="Foxconn Logo"
+           style="width:42px;height:42px;object-fit:contain;filter:brightness(0) invert(1) drop-shadow(0 0 6px rgba(74,144,245,.8));">
+    </div>
+  </div>
+
+  <div class="brand-line">
+    <div class="brand-corp">鴻海科技集團 Hon Hai Technology Group</div>
+    <div class="brand-prog">2026 董辦暑期實習生計劃 Foxconn Summer Internship Program</div>
+  </div>
+
+  <div class="headline">
+    <div class="hl-stage">
+      <span class="hl-stage-dot"></span>
+      恭喜通過第一階段 &nbsp;·&nbsp; Stage 1 Cleared
+      <span class="hl-stage-dot"></span>
+    </div>
+    <div class="hl-zh">您已通過<財務金融組>初選</div>
+    <div class="hl-en">You Have Been Selected to Advance</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="info-card">
+    <div class="tags-row">
+      <span class="tag tag-pass">書面審查 &nbsp;Document Review</span>
+      <span class="tag tag-pass">線上測評 &nbsp;Online Assessment</span>
+    </div>
+
+    <div class="card-body">
+      您的申請已通過書面審查及線上測評，<br>
+      誠摯邀請您參加<strong style="color:var(--white)">第二階段面談會</strong>。<br>
+      <span class="card-body-en">
+        Your application has cleared the document review and online assessment.<br>
+        You are cordially invited to the <strong style="color:var(--silver-lt)">Stage 2 Interview Session</strong>.
+      </span>
+    </div>
+
+    <div class="deadline-row">
+      <span class="deadline-icon">⏰</span>
+      <div>
+        <div class="deadline-label-zh">表單提交截止 &nbsp;<span style="color:var(--silver);">Registration Deadline</span></div>
+        <div class="deadline-val">2026/4/14(二) 17:30 &nbsp;<span style="font-weight:400;color:var(--silver-lt);font-size:.78rem;">Tue, Apr 14 &nbsp;5:30 PM</span></div>
+      </div>
+    </div>
+
+    <div class="sessions-row">
+      <div class="session-chip">📅 <span>4/18 (六·Sat.)</span>&nbsp; 13:00 – 17:30</div>
+      <div class="session-chip">📅 <span>4/25 &nbsp;(六·Sat.)</span>&nbsp; 08:30 – 12:00</div>
+    </div>
+
+    <div class="dei-strip">
+      <div class="dei-chip">
+        <span class="dei-chip-icon">🌐</span>
+        <div>海外同學可申請視訊連線
+          <span class="dei-label">Virtual connection available for overseas students</span>
+        </div>
+      </div>
+      <div class="dei-chip">
+        <span class="dei-chip-icon">🚗</span>
+        <div>可登記停車需求
+          <span class="dei-label">Parking registration available</span>
+        </div>
+      </div>
+      <div class="dei-chip">
+        <span class="dei-chip-icon">♿</span>
+        <div>無障礙支援，歡迎提出需求
+          <span class="dei-label">Accessibility &amp; support accommodations welcome</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="cta-btn" id="ready-btn" onclick="openNameModal()">
+    <span class="cta-zh">我準備好了，前往選擇面談時段 &nbsp;→</span>
+    <span class="cta-en">I'm Ready — Select My Interview Session</span>
+  </button>
+
+  <p class="footer-note">
+    如有任何疑問，請聯絡job@foxconn.com &nbsp;·&nbsp;
+    For inquiries, please contact job@foxconn.com
+  </p>
+
+</div><!-- /screen-inner -->
+</div><!-- /s-invite -->
+
+<!-- ══════════════════════════════════════════════════════════════════
+     NAME MODAL
+═══════════════════════════════════════════════════════════════════ -->
+<div id="name-modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-title-zh">客製化您的邀請</div>
+    <div class="modal-title-en">Personalize Your Invitation</div>
+    <label class="field-label" for="name-input">
+      您的姓名 &nbsp;·&nbsp; Your Name
+    </label>
+    <input
+      id="name-input"
+      class="field-input"
+      type="text"
+      placeholder="請輸入姓名 / Please enter your name"
+      autocomplete="name"
+    />
+    <button class="modal-cta" onclick="proceedToForm()">
+      前往填寫面談時段 &nbsp;·&nbsp; Proceed to Registration
+    </button>
+    <button class="modal-skip" onclick="proceedToForm()">
+      略過 · Skip
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SCREEN 2 — FORM
+═══════════════════════════════════════════════════════════════════ -->
+<div class="screen out" id="s-form">
+
+  <div class="form-topbar">
+    <div class="topbar-text">
+      <div class="topbar-zh">選擇面談時段</div>
+      <div class="topbar-en">Select Your Interview Session</div>
+    </div>
+    <div class="topbar-step">● 第二階段 &nbsp;Stage 2</div>
+    <button class="back-btn" onclick="goBack()">← 返回</button>
+  </div>
+
+  <div class="form-iframe-wrap">
+    <iframe
+      id="form-iframe"
+      title="面談時段報名表 / Interview Session Registration"
+      allowfullscreen
+    >載入中 / Loading…</iframe>
+  </div>
+
+  <div class="manual-submit-bar" id="manual-bar">
+    <div class="manual-submit-hint">
+      <div style="color:var(--white);font-size:.75rem;margin-bottom:.15rem;">
+        ① 填完表單後，請先按表單內的<strong>「提交」</strong>
+      </div>
+      <div style="font-size:.65rem;color:var(--silver);">
+        ② 提交成功後，再點右側按鈕取得憑證
+        &nbsp;·&nbsp; Submit the form first, then click →
+      </div>
+    </div>
+    <button class="manual-submit-btn" onclick="showCertificate()">
+      ✓ &nbsp;已提交，<br>取得憑證
+    </button>
+  </div>
+
+</div><!-- /s-form -->
+
+<!-- ══════════════════════════════════════════════════════════════════
+     CERTIFICATE OVERLAY
+═══════════════════════════════════════════════════════════════════ -->
+<div id="cert-overlay" role="dialog" aria-modal="true" aria-label="面談邀請確認書">
+<div id="cert-overlay-inner">
+  <div class="cert-card" id="cert-card">
+
+    <div class="corner c-tl"></div>
+    <div class="corner c-tr"></div>
+    <div class="corner c-bl"></div>
+    <div class="corner c-br"></div>
+
+    <div class="cert-seal">
+      <img src="square_monotone.png" alt="Foxconn Logo"
+           style="width:40px;height:40px;object-fit:contain;filter:brightness(0) invert(1) drop-shadow(0 0 4px rgba(255,255,255,.4));">
+    </div>
+
+    <div class="cert-brand">◈ &nbsp;Foxconn &nbsp;·&nbsp; 鴻海科技集團 &nbsp;◈</div>
+    <div class="cert-title-zh">面談邀請確認書</div>
+    <div class="cert-title-en">INTERVIEW INVITATION CONFIRMED</div>
+
+    <div class="cert-rule"></div>
+
+    <div class="cert-to">致 &nbsp;/&nbsp; To</div>
+    <div class="cert-name" id="cert-name">親愛的申請者</div>
+
+    <div class="cert-rule"></div>
+
+    <div class="cert-body">
+      恭喜您完成面談時段報名！<br>
+      <span class="en">Congratulations! Your registration has been received.</span>
+      <br><br>
+      您已正式確認參加<br>
+      <span class="en">You are officially confirmed for</span>
+    </div>
+
+    <div class="cert-prog-zh">2026 鴻海董辦暑期實習生面談會</div>
+    <div class="cert-prog-en">2026 Foxconn Summer Internship Interview</div>
+
+    <div class="cert-rule"></div>
+
+    <div class="cert-body">
+      我們將以email通知面談詳細資訊，請留意信箱。<br>
+      <span class="en">Interview details will be sent to your registered email. Please check your inbox.</span>
+    </div>
+
+    <div class="cert-code-box" id="cert-code">FOX-2026-······</div>
+
+    <div class="cert-date" id="cert-date">2026-04-07</div>
+
+    <div class="cert-actions">
+      <button class="cert-btn cert-btn-primary" onclick="saveCertificate()">
+        儲存憑證 &nbsp;/&nbsp; Save
+      </button>
+      <button class="cert-btn cert-btn-secondary" onclick="closeCertificate()">
+        完成 &nbsp;/&nbsp; Done
+      </button>
+    </div>
+
+  </div>
+</div><!-- /cert-overlay-inner -->
+</div><!-- /cert-overlay -->
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════════════ -->
+<script>
+/* ─── Auto-resize iframe ───────────────────────────────────────────── */
+function resizeFormIframe() {
+  const iframe = document.getElementById('form-iframe');
+
+  // Method 1: postMessage from Google Forms
+  window.addEventListener('message', function (e) {
+    if (!e.origin.includes('google.com')) return;
+    try {
+      const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+      if (data && data.height && data.height > 200) {
+        iframe.style.height = (data.height + 40) + 'px';
+      }
+    } catch (_) {}
+  });
+
+  // On each load: try to resize, and on 2nd load reveal the green button
+  iframe.addEventListener('load', function () {
+    try {
+      const h = iframe.contentWindow.document.body.scrollHeight;
+      if (h > 200) iframe.style.height = (h + 40) + 'px';
+    } catch (_) {}
+
+    iframeLoadCount++;
+    if (iframeLoadCount >= 2 && !certShown) {
+      // Form submitted — shrink to thank-you size, show green button.
+      // Certificate only appears when user clicks the button.
+      iframe.style.height = '380px';
+      const bar = document.getElementById('manual-bar');
+      bar.classList.add('visible');
+      // Scroll to top so user sees the thank-you + green button clearly
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 300);
+    }
+  });
+}
+
+/* ─── State ───────────────────────────────────────────────────────── */
+let candidateName  = '';
+let iframeLoadCount = 0;
+let certShown       = false;
+
+/* ─── Helpers ─────────────────────────────────────────────────────── */
+function show(id)  {
+  document.getElementById(id).classList.remove('out');
+  window.scrollTo(0, 0);
+}
+function hide(id)  { document.getElementById(id).classList.add('out'); }
+function openOverlay(id)  { document.getElementById(id).classList.add('open');    }
+function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+
+/* ─── Name modal ──────────────────────────────────────────────────── */
+function openNameModal() {
+  openOverlay('name-modal');
+  setTimeout(() => document.getElementById('name-input').focus(), 350);
+}
+
+document.getElementById('name-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') proceedToForm();
+});
+
+/* ─── Transition: invite → form ───────────────────────────────────── */
+function proceedToForm() {
+  const val = document.getElementById('name-input').value.trim();
+  candidateName = val || '';
+  closeOverlay('name-modal');
+
+  setTimeout(() => {
+    hide('s-invite');
+    show('s-form');
+
+    // Lazy load iframe — only fetch Google Form when user actually navigates here
+    const iframe = document.getElementById('form-iframe');
+    if (!iframe.src || iframe.src === window.location.href) {
+      iframe.src = 'https://docs.google.com/forms/d/e/1FAIpQLSe9Jx7-D2Y8cY_odCJCslH8cmEuOEoMLrJoxfIsHmp3ZUdNYQ/viewform?embedded=true';
+    }
+
+    setupIframeDetection();
+
+  }, 320);
+}
+
+/* ─── Back ────────────────────────────────────────────────────────── */
+function goBack() {
+  hide('s-form');
+  show('s-invite');
+  iframeLoadCount = 0;
+  certShown = false;
+  document.getElementById('manual-bar').classList.remove('visible');
+}
+
+/* ─── Iframe submission detection ─────────────────────────────────── */
+function setupIframeDetection() {
+  resizeFormIframe(); // handles both resize + load-count detection
+}
+
+/* ─── Certificate ─────────────────────────────────────────────────── */
+function showCertificate() {
+  certShown = true;
+  document.getElementById('manual-bar').classList.remove('visible');
+
+  // Confirmation code — timestamp based
+  const now = new Date();
+  const mm   = String(now.getMonth() + 1).padStart(2, '0');
+  const dd   = String(now.getDate()).padStart(2, '0');
+  const hh   = String(now.getHours()).padStart(2, '0');
+  const min  = String(now.getMinutes()).padStart(2, '0');
+  const code = `FOX-2026-${mm}${dd}-${hh}${min}`;
+  document.getElementById('cert-code').textContent = code;
+
+  // Name
+  document.getElementById('cert-name').textContent =
+    candidateName || '親愛的申請者 / Dear Applicant';
+
+  // Date
+  const d    = new Date();
+  const pad  = n => String(n).padStart(2, '0');
+  document.getElementById('cert-date').textContent =
+    `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+  openOverlay('cert-overlay');
+}
+
+/* ─── Save / close certificate ────────────────────────────────────── */
+async function saveCertificate() {
+  const btn = document.querySelector('.cert-btn-primary');
+  const originalText = btn.textContent;
+  btn.textContent = '處理中… / Processing…';
+  btn.disabled = true;
+
+  const actions  = document.querySelector('.cert-actions');
+  const nameEl   = document.getElementById('cert-name');
+
+  // Temporarily hide buttons and fix gradient-text for html2canvas
+  actions.style.display = 'none';
+  const prevBg    = nameEl.style.background;
+  const prevColor = nameEl.style.color;
+  const prevClip  = nameEl.style.webkitBackgroundClip;
+  nameEl.style.background             = 'none';
+  nameEl.style.webkitBackgroundClip   = 'unset';
+  nameEl.style.backgroundClip         = 'unset';
+  nameEl.style.color                  = '#e6c96a';
+
+  try {
+    const card = document.getElementById('cert-card');
+    const canvas = await html2canvas(card, {
+      backgroundColor: '#091526',
+      scale: 2,
+      useCORS: true,
+      logging: false
+    });
+
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const filename = `foxconn-2026-invitation-${document.getElementById('cert-code').textContent}.png`;
+
+    if (isMobile && navigator.share && navigator.canShare) {
+      // 手機：Web Share API → 系統分享/儲存選單
+      canvas.toBlob(async (blob) => {
+        const file = new File([blob], filename, { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: '鴻海面談邀請憑證' });
+        } else {
+          triggerDownload(canvas, filename);
+        }
+      }, 'image/png');
+    } else {
+      // 電腦：直接下載 PNG
+      triggerDownload(canvas, filename);
+    }
+  } catch (e) {
+    window.print();
+  } finally {
+    // Restore everything
+    actions.style.display = '';
+    nameEl.style.background           = prevBg;
+    nameEl.style.webkitBackgroundClip = prevClip;
+    nameEl.style.backgroundClip       = prevClip;
+    nameEl.style.color                = prevColor;
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
+
+function triggerDownload(canvas, filename) {
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function closeCertificate() {
+  closeOverlay('cert-overlay');
+  // Return to invite screen
+  hide('s-form');
+  show('s-invite');
+}
+</script>
+</body>
+</html>
